@@ -1,0 +1,2 @@
+py-ms[all]==2.6.1
+Flask-SocketIO==4.2.1

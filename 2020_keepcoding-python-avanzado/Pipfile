@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+mock = "==3.0.5"
+
+[packages]
+jupyter = "*"
+requests = "==2.22.0"
+pylint = "*"
+flake8 = "*"
+safety = "*"
+bandit = "*"
+jupyter-console = "*"
+
+[requires]
+python_version = "3.7"
