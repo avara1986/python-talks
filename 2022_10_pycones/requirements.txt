@@ -1,2 +1,4 @@
 Cython==0.29.32
 pyperf==2.4.1
+cmake==3.24.0
+snakeviz==2.1.1

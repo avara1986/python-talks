@@ -14,8 +14,9 @@ python -m pyperf compare_to --table results/binary_search.json results/cython_bi
 +------------+---------------+-----------------------+---------------------------+
 | Benchmark  | binary_search | cython_binary_search  | native_binary_search      |
 +============+===============+=======================+===========================+
-| happy_path | 5.20 us       | 4.17 us: 1.25x faster | 86.7 ms: 16681.07x slower |
+| happy_path | 3.95 us       | 4.20 us: 1.06x slower | 88.4 ms: 22409.51x slower |
 +------------+---------------+-----------------------+---------------------------+
+
 
 ```
 
@@ -23,14 +24,14 @@ python -m pyperf compare_to --table results/binary_search.json results/cython_bi
 make
 cmake .
 ./binarysearch 
-Elapsed time: 2994[ms]
-Elapsed time: 2994433[µs][microseconds]
-Elapsed time: 2994433429[ns][nanoseconds]
+Elapsed time: 2.994[ms]
+Elapsed time: 2.994.433[µs][microseconds]
+Elapsed time: 2.994.433.429[ns][nanoseconds]
 ```
 
 ```
 python binarysearch.py
-Completed Execution in 0.5653389998769853[ms]
+Elapsed time: 0.5653389998769853[ms]
 ```
 
 Add 
@@ -45,28 +46,26 @@ make
 cmake .
 ./binarysearch 
 Elapsed time: 0[ms]
-Elapsed time: 2[µs][microseconds]  -> 0.002 miliseconds
-Elapsed time: 2827[ns][nanoseconds]
+Elapsed time: 2[µs][microseconds] -> 0.002 miliseconds -> 2.827 nanoseconds
+Elapsed time: 2.827[ns][nanoseconds]
 
 ```
 
 ```
 python binarysearch.py
-Completed Execution in 0.5653389998769853[ms]
+Elapsed time: 0.5653389998769853[ms] -> 0.565 miliseconds -> 565.338 nanoseconds
 ```
 
 ```
 ./run.sh
-.....................
-happy_path: Mean +- std dev: 79.6 ms +- 3.9 ms
-.....................
-happy_path: Mean +- std dev: 4.08 us +- 0.04 us
-.....................
-happy_path: Mean +- std dev: 3.86 us +- 0.04 us
 +------------+---------------+-----------------------+---------------------------+
 | Benchmark  | binary_search | cython_binary_search  | native_binary_search      |
 +============+===============+=======================+===========================+
-| happy_path | 3.86 us       | 4.08 us: 1.06x slower | 79.6 ms: 20584.44x slower |
+| happy_path | 3.90 us       | 4.18 us: 1.07x slower | 57.0 ms: 14620.98x slower |
 +------------+---------------+-----------------------+---------------------------+
 ```
 
+
+```
+./profiling.sh
+```
