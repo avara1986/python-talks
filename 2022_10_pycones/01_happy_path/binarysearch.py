@@ -1,7 +1,10 @@
 from typing import List
 import time
 
+from constants import LOOPS, SEARCH_LIST
+
 COUNTER = 0
+
 
 def binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
     if high >= low:
@@ -19,10 +22,13 @@ def binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
         return -1
 
 
+def benchmark_binary_search(loops=10):
+    for i in range(0, loops):
+        binary_search(SEARCH_LIST, 66666, 0, len(SEARCH_LIST))
+
+
 if __name__ == "__main__":
-    search_list = [i for i in range(1000000)]
     start = time.perf_counter()
-    for i in range(0, 100):
-        binary_search(search_list, 66666, 0, len(search_list))
-        # print(f"FINISH {i}")
-    print(f"Completed Execution in {(time.perf_counter() - start)*1000} miliseconds")
+    benchmark_binary_search()
+    # print(f"FINISH {i}")
+    print(f"Completed Execution in {(time.perf_counter() - start) * 1000} miliseconds")

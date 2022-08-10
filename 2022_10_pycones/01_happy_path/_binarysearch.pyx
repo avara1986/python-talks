@@ -3,6 +3,8 @@ from typing import List
 import cython
 from libcpp.vector cimport vector
 
+from constants import LOOPS, SEARCH_LIST
+
 cdef extern from "src/binarysearch.hpp":
     cython.int binsearch(vector[int] l, int value, int low, int high)
 
@@ -10,7 +12,9 @@ cdef extern from "src/binarysearch.hpp":
 cpdef native_binary_search(vector[int] l, int value, int low=0, int high=-1):
     return binsearch(l, value, low, high)
 
-
+def benchmark_native_binary_search(loops=10):
+    for i in range(0, loops):
+        native_binary_search(SEARCH_LIST, 66666, 0, len(SEARCH_LIST))
 def cython_binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
     if high >= low:
         mid = (high + low) // 2
@@ -22,3 +26,7 @@ def cython_binary_search(l: List[int], value: int, low: int = 0, high: int = -1)
             return cython_binary_search(l, value, mid + 1, high)
     else:
         return -1
+
+def benchmark_cython_binary_search(loops=10):
+    for i in range(0, loops):
+        cython_binary_search(SEARCH_LIST, 66666, 0, len(SEARCH_LIST))

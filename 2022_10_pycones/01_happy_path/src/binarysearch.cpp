@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
     for (int i=0; i<1000000; i++) arr.push_back(i);
 
     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-    for (int i=0; i<100; i++){
+    for (int i=0; i<10; i++){
         binsearch(arr, 66666, 0, arr.size());
         // cout << "FINISH " << i << "\n";
         //    std::cout << "Result: " << binsearch(arr, 66666, 0, arr.size()) << '\n';

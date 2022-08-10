@@ -2,30 +2,29 @@ import sys
 
 import pyperf
 
-from _binarysearch import cython_binary_search, native_binary_search
-from binarysearch import binary_search
+from _binarysearch import benchmark_native_binary_search, benchmark_cython_binary_search
+from binarysearch import benchmark_binary_search
 
-search_list = [i for i in range(1000000)]
 
 function_name = ""
+inner_loops = 10
 
 def add_cmdline_args(cmd, args):
     cmd.extend(("-f", function_name))
+    cmd.extend(("-i", str(inner_loops)))
 
 
 if __name__ == "__main__":
     runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
     cmd = runner.argparser
     cmd.add_argument("-f", "--function_name", default="", type=str)
+    cmd.add_argument("-i", "--inner_loops", default=10, type=int)
     parsed_args = runner.parse_args()
     function_name = parsed_args.function_name
+    inner_loops = int(parsed_args.inner_loops)
     if function_name == "binary_search":
-        f = binary_search
+        runner.bench_func("happy_path_{}".format(inner_loops), benchmark_binary_search, inner_loops)
     elif function_name == "cython_binary_search":
-        f = cython_binary_search
+        runner.bench_func("happy_path_{}".format(inner_loops), benchmark_cython_binary_search, inner_loops)
     elif function_name == "native_binary_search":
-        f = native_binary_search
-    else:
-        print(sys.argv)
-        raise Exception("ERROR")
-    runner.bench_func("happy_path", f, search_list, 66666, 0, len(search_list))
+        runner.bench_func("happy_path_{}".format(inner_loops), benchmark_native_binary_search, inner_loops)
