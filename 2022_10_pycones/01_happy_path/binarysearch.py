@@ -9,14 +9,11 @@ COUNTER = 0
 def binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
     if high >= low:
         mid = (high + low) // 2
-        # print(f"{COUNTER} Search mid: {mid}")
         if l[mid] == value:
             return mid
         elif l[mid] > value:
-            # print(f"{COUNTER} Search lower: {mid}")
             return binary_search(l, value, low, mid - 1)
         else:
-            # print(f"{COUNTER} Search upper: {mid}")
             return binary_search(l, value, mid + 1, high)
     else:
         return -1
