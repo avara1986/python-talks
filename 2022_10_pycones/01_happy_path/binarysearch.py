@@ -1,10 +1,7 @@
 from typing import List
 import time
 
-from constants import LOOPS, SEARCH_LIST
-
-COUNTER = 0
-
+from constants import SEARCH_LIST
 
 def binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
     if high >= low:

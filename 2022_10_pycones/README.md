@@ -1,4 +1,7 @@
-
+```angular2html
+vim 01_happy_path/binarysearch.py
+vim 01_happy_path/_binarysearch.pyx
+```
 
 ```bash
 cd 01_happy_path
