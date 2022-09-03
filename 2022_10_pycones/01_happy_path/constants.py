@@ -1,3 +1,3 @@
-LOOPS = 5
+LOOPS = 10
 
-SEARCH_LIST = [i for i in range(1000000)]
+SEARCH_LIST = [i for i in range(100000)]
