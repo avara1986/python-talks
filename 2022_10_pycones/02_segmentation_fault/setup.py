@@ -15,10 +15,9 @@ if __name__ == "__main__":
         ext_modules=cythonize(
             [
                 Cython.Distutils.Extension(
-                    "_binarysearch",
-                    sources=["_binarysearch.pyx"],
-                    include_dirs=['src'],
-                    language="c++",
+                    "_segmentation",
+                    sources=["_segmentation.pyx"],
+                    language="c",
                     extra_compile_args=extra_compile_args,
                 ),
             ], gdb_debug=True

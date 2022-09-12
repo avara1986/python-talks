@@ -15,6 +15,3 @@ include_directories(.)
 add_executable(binarysearch
         binarysearch.cpp
         binarysearch.hpp)
-
-# Link dependencies
-target_link_libraries(binarysearch ${SQLite3_LIBRARIES})
