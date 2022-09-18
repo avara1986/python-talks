@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="revealjs/dist/reset.css">
+		<link rel="stylesheet" href="revealjs/dist/reveal.css">
+		<link rel="stylesheet" href="revealjs/dist/theme/black.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="revealjs/plugin/highlight/monokai.css">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-color="black">
+					<img data-src="revealjs/imgs/01.png">
+				</section>
+				<section data-markdown data-background-color="white">
+					<textarea data-template>
+					## Alberto Vara
+					<img src="revealjs/imgs/sillywalk.png" style="width: 50%;">
+					</textarea>
+				</section>
+				<section data-markdown >
+				  <textarea data-template>
+					## Motivacion
+					---
+					## Introducción
+					  - Cython
+					  - Pyperf
+					  - Py-spy
+					  - Gdb
+					## En materia
+					  - Rendimiento
+					  - Segmentation Faults
+					---
+					## Cython como proxy
+					  Alternativas:
+					  - Pybind11
+					  - Boost Python
+					  - Cpython
+					---
+					## Pyperf
+					  Alternativas:
+					  - ASV
+					  - Valgrind
+					---
+					## py-spy
+					  Alternativas:
+					  - CProfile (pstats)
+					  - pyinstrument
+					  - austin
+					---
+					## Flame Graphs
+					---
+					## gdb
+					---
+					# CODE
+				  </textarea>
+				</section>
+				<!-- <section data-markdown="segemtationfaultfest.md"
+					 	data-separator="^\n\n\n"
+						data-separator-vertical="^\n\n"
+					 	data-separator-notes="^Note:"
+					 	data-charset="iso-8859-15"></section> -->
+			</div>
+		</div>
+
+		<script src="revealjs/dist/reveal.js"></script>
+		<script src="revealjs/plugin/notes/notes.js"></script>
+		<script src="revealjs/plugin/markdown/markdown.js"></script>
+		<script src="revealjs/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

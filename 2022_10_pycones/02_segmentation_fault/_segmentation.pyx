@@ -34,7 +34,7 @@ cdef class Wrapper(object):
 
 
     cdef object _string_to_bytes(self, object string, const char ** ptr, ssize_t *length):
-        # ptr[0] = NULL
+        ptr[0] = NULL
         if isinstance(string, six.binary_type):
             ptr[0] = PyBytes_AsString(string)
             length[0] = PyBytes_Size(string)
@@ -51,5 +51,11 @@ cdef class Wrapper(object):
         result_object.stringValue = value[0]
         return result_object
 
+    cdef long build_result2(self):
+        cdef long array[5]
+        for i in range(6):
+            array[i] = -1
+        return 0
+
     def results(self):
-        return self.bytes_list
+        return self.build_result()
