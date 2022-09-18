@@ -1,6 +1,7 @@
 ```angular2html
 vim 01_happy_path/binarysearch.py
 vim 01_happy_path/_binarysearch.pyx
+vim 01_happy_path/src/binarysearch.cpp
 ```
 
 ```bash
@@ -14,29 +15,31 @@ python -m pyperf compare_to --table results/binary_search_10.json results/cython
 
 ```
 ./run.sh
-+---------------+------------------+-------------------------+--------------------------+
-| Benchmark     | binary_search_10 | cython_binary_search_10 | native_binary_search_10  |
-+===============+==================+=========================+==========================+
-| happy_path_10 | 43.7 us          | 47.5 us: 1.09x slower   | 877 ms: 20079.75x slower |
-+---------------+------------------+-------------------------+--------------------------+
-
-
++---------------+-----------------------+--------------------------+
+| binary_search | cython_binary_search  | native_binary_search     |
++===============+=======================+==========================+
+| 30.9 us       | 21.2 us: 1.46x faster | 42.5 ms: 1372.82x slower |
++---------------+-----------------------+--------------------------+
 ```
 
 ```
 cd src/
-make
-cmake .
+cmake . && make && ./binarysearch 
+
 ./binarysearch 
 Elapsed time: 2.994[ms]
 Elapsed time: 2.994.433[µs][microseconds]
 Elapsed time: 2.994.433.429[ns][nanoseconds]
 ```
 
-```
-python binarysearch.py
-Elapsed time: 0.5653389998769853[ms]
-```
+
+export PY_LOOPS=10
+py-spy record --native --format speedscope --rate 1000 -o flamegraphs/binarysearch_native.prof -- python binarysearch_native.py
+export PY_LOOPS=10000
+py-spy record --native --format speedscope --rate 1000 -o flamegraphs/binarysearch_cython.prof -- python binarysearch_cython.py
+./profiling.sh
+google-chrome flamegraphs/binarysearch_cython.svg
+google-chrome flamegraphs/binarysearch_native.svg
 
 Add 
 
@@ -46,9 +49,8 @@ Add
 ```
 
 ```
-make
-cmake .
-./binarysearch 
+cd src/
+cmake . && make && ./binarysearch 
 Elapsed time: 0[ms]
 Elapsed time: 2[µs][microseconds] -> 0.002 miliseconds -> 2.827 nanoseconds
 Elapsed time: 2.827[ns][nanoseconds]
@@ -56,19 +58,15 @@ Elapsed time: 2.827[ns][nanoseconds]
 ```
 
 ```
-python binarysearch.py
-Elapsed time: 0.5653389998769853[ms] -> 0.565 miliseconds -> 565.338 nanoseconds
-```
-
-```
 ./run.sh
-+------------+---------------+-----------------------+---------------------------+
-| Benchmark  | binary_search | cython_binary_search  | native_binary_search      |
-+============+===============+=======================+===========================+
-| happy_path | 3.90 us       | 4.18 us: 1.07x slower | 57.0 ms: 14620.98x slower |
-+------------+---------------+-----------------------+---------------------------+
++---------------+-----------------------+-------------------------+
+| binary_search | cython_binary_search  | native_binary_search    |
++===============+=======================+=========================+
+| 30.6 us       | 20.8 us: 1.47x faster | 24.2 ms: 792.40x slower |
++---------------+-----------------------+-------------------------+
 ```
 
 ```
 ./profiling.sh
 ```
+

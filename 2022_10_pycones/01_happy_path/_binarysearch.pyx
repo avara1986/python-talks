@@ -20,12 +20,12 @@ cdef int cython_binary_search(l: List[int], value: int, low: int = 0, high: int 
     else:
         return -1
 
-def benchmark_native_binary_search(loops=10):
+cpdef void benchmark_native_binary_search(loops=10):
     cdef int len_search_list = len(SEARCH_LIST)
     for i in range(0, loops):
         binsearch(SEARCH_LIST, 66666, 0, len_search_list)
 
-def benchmark_cython_binary_search(loops: int = 10) -> None:
+cpdef void benchmark_cython_binary_search(loops: int = 10):
     cdef int len_search_list = len(SEARCH_LIST)
     for i in range(0, loops):
         cython_binary_search(SEARCH_LIST, 66666, 0, len_search_list)

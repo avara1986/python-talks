@@ -27,58 +27,119 @@
 				</section>
 				<section data-markdown >
 				  <textarea data-template>
-					  ## Motivacion
-                      ---
-                      ## Introducción
-                        - Cython
-                        - Pyperf
-                        - Py-spy
-                        - Gdb
-                      ## En materia
-                        - Rendimiento
-                        - Segmentation Faults
-                      ---
-                      ## Cython como proxy
-                        Alternativas:
-                        - Pybind11
-                        - Boost Python
-                        - Cpython
-                      ---
-                      ## Pyperf
-                        Alternativas:
-                        - ASV
-                        - Valgrind
-                      ---
-                      ## py-spy
-                        Alternativas:
-                        - CProfile (pstats)
-                        - pyinstrument
-                        - austin
-                      ---
-                      ## Flame Graphs
-                      ---
-                      ## gdb
-                      ---
-                      # CODE
-                      ---
-                      Python / Cython / C++ sin optimización. 10 bucles
-                      ```
-                      +---------------+---------------+-----------------------+--------------------------+
-                      | Benchmark     | binary_search | cython_binary_search  | native_binary_search     |
-                      +===============+===============+=======================+==========================+
-                      | happy_path_10 | 30.2 us       | 19.5 us: 1.55x faster | 43.9 ms: 1453.70x slower |
-                       +---------------+---------------+-----------------------+--------------------------+
-					  ```
-                      ---
-                      Python / Cython / C++ optimización con referencia. 10 bucles
-                      ```
-                      +---------------+---------------+-----------------------+-------------------------+
-                      | Benchmark     | binary_search | cython_binary_search  | native_binary_search    |
-                      +===============+===============+=======================+=========================+
-                      | happy_path_10 | 30.6 us       | 20.8 us: 1.47x faster | 24.2 ms: 792.40x slower |
-                      +---------------+---------------+-----------------------+-------------------------+
-					  ```
+## Motivacion
+<img src="revealjs/imgs/goto.png" style="width: 50%;">
+---
+## Escenario
+- Instrumentar código ("wrappear" codigo, Monkey Patching...)
+- Reducir al mínimo el tiempo extra (overhead)
+- Python llega a un punto que no es optimo
+---
+`func_1` -> 3.06 µs. `func_6` -> 5.43 µs
+```
+def func_1(a, b, c):
+    return f"hello {a} {b} {c}"
 
+def func_2(a, b, c):
+    return func_1(a, b, c)
+
+def func_3(a, b, c):
+    return func_2(a, b, c)
+
+def func_4(a, b, c):
+    return func_3(a, b, c)
+
+def func_5(a, b, c):
+    return func_4(a, b, c)
+
+def func_6(a, b, c):
+    return func_5(a, b, c)
+```
+---
+## Introducción
+- Cython
+- Pyperf
+- Py-spy
+- Gdb
+## En materia
+- Rendimiento
+- Segmentation Faults
+---
+## Cython como proxy
+Alternativas:
+- Pybind11
+- Boost Python
+- Cpython
+---
+## Pyperf
+Alternativas:
+- ASV
+- Valgrind
+---
+## py-spy
+Alternativas:
+- CProfile (pstats)
+- pyinstrument
+- austin
+---
+## Flame Graphs
+<img src="revealjs/imgs/binarysearch_native.svg" style="width: 100%;">
+---
+## gdb
+---
+# CODE
+---
+# CODE
+---
+Python / Cython / C++ sin optimización. 10 bucles
+```bash
++---------------+-----------------------+--------------------------+
+| binary_search | cython_binary_search  | native_binary_search     |
++===============+=======================+==========================+
+| 30.9 us       | 21.2 us: 1.46x faster | 42.5 ms: 1372.82x slower |
++---------------+-----------------------+--------------------------+
+```
+---
+Python / Cython / C++ optimización con referencia. 10 bucles
+```bash
++---------------+-----------------------+-------------------------+
+| binary_search | cython_binary_search  | native_binary_search    |
++===============+=======================+=========================+
+| 30.6 us       | 20.8 us: 1.47x faster | 24.2 ms: 792.40x slower |
++---------------+-----------------------+-------------------------+
+```
+---
+Python / Cython / C++ optimización con punteros. 1.000 bucles
+```bash
++---------------+-----------------------+-----------------------+
+| binary_search | cython_binary_search  | native_binary_search  |
++===============+=======================+=======================+
+| 3.06 ms       | 1.97 ms: 1.55x faster | 2.66 ms: 1.15x faster |
++---------------+-----------------------+-----------------------+
+```
+---
+Python / Cython / C++ optimización con punteros. 10.000 bucles
+```bash
++---------------+-----------------------+-----------------------+
+| binary_search | cython_binary_search  | native_binary_search  |
++===============+=======================+=======================+
+| 30.2 ms       | 19.5 ms: 1.55x faster | 3.91 ms: 7.73x faster |
++---------------+-----------------------+-----------------------+
+```
+---
+Python / Cython / C++ optimización con punteros. 100.000 bucles
+```bash
++---------------+----------------------+------------------------+
+| binary_search | cython_binary_search | native_binary_search   |
++===============+======================+========================+
+| 304 ms        | 193 ms: 1.58x faster | 14.9 ms: 20.40x faster |
++---------------+----------------------+------------------------+
+```
+---
+Conclusion
+- Pasar variables entre lenguajes tiene un peaje
+- Para compensar el peaje, el numero de operaciones tiene que ser considerable
+-
 				  </textarea>
 				</section>
 				<!-- <section data-markdown="segemtationfaultfest.md"
