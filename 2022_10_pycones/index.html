@@ -27,39 +27,58 @@
 				</section>
 				<section data-markdown >
 				  <textarea data-template>
-					## Motivacion
-					---
-					## Introducción
-					  - Cython
-					  - Pyperf
-					  - Py-spy
-					  - Gdb
-					## En materia
-					  - Rendimiento
-					  - Segmentation Faults
-					---
-					## Cython como proxy
-					  Alternativas:
-					  - Pybind11
-					  - Boost Python
-					  - Cpython
-					---
-					## Pyperf
-					  Alternativas:
-					  - ASV
-					  - Valgrind
-					---
-					## py-spy
-					  Alternativas:
-					  - CProfile (pstats)
-					  - pyinstrument
-					  - austin
-					---
-					## Flame Graphs
-					---
-					## gdb
-					---
-					# CODE
+					  ## Motivacion
+                      ---
+                      ## Introducción
+                        - Cython
+                        - Pyperf
+                        - Py-spy
+                        - Gdb
+                      ## En materia
+                        - Rendimiento
+                        - Segmentation Faults
+                      ---
+                      ## Cython como proxy
+                        Alternativas:
+                        - Pybind11
+                        - Boost Python
+                        - Cpython
+                      ---
+                      ## Pyperf
+                        Alternativas:
+                        - ASV
+                        - Valgrind
+                      ---
+                      ## py-spy
+                        Alternativas:
+                        - CProfile (pstats)
+                        - pyinstrument
+                        - austin
+                      ---
+                      ## Flame Graphs
+                      ---
+                      ## gdb
+                      ---
+                      # CODE
+                      ---
+                      Python / Cython / C++ sin optimización. 10 bucles
+                      ```
+                      +---------------+---------------+-----------------------+--------------------------+
+                      | Benchmark     | binary_search | cython_binary_search  | native_binary_search     |
+                      +===============+===============+=======================+==========================+
+                      | happy_path_10 | 30.2 us       | 19.5 us: 1.55x faster | 43.9 ms: 1453.70x slower |
+                       +---------------+---------------+-----------------------+--------------------------+
+					  ```
+                      ---
+                      Python / Cython / C++ optimización con referencia. 10 bucles
+                      ```
+                      +---------------+---------------+-----------------------+-------------------------+
+                      | Benchmark     | binary_search | cython_binary_search  | native_binary_search    |
+                      +===============+===============+=======================+=========================+
+                      | happy_path_10 | 30.6 us       | 20.8 us: 1.47x faster | 24.2 ms: 792.40x slower |
+                      +---------------+---------------+-----------------------+-------------------------+
+					  ```
+
 				  </textarea>
 				</section>
 				<!-- <section data-markdown="segemtationfaultfest.md"
