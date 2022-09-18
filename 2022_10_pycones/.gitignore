@@ -10,7 +10,6 @@ __pycache__/
 __pycache__/*
 01_happy_path/build
 01_happy_path/results
-01_happy_path/*.so
 01_happy_path/_binarysearch.cpp
 01_happy_path/src/.idea
 01_happy_path/src/.cmake

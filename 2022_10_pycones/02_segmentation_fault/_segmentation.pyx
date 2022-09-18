@@ -1,8 +1,9 @@
-import six
 import cython
-from cpython.bytes cimport PyBytes_AsString
-from cpython.bytes cimport PyBytes_Size
+import six
+
+from cpython.bytes cimport PyBytes_AsString, PyBytes_Size
 from cpython.unicode cimport PyUnicode_AsEncodedString
+
 
 cdef extern from "Python.h":
     const char* PyUnicode_AsUTF8AndSize(object o, Py_ssize_t *size)

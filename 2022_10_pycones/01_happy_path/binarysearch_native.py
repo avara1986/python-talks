@@ -1,7 +1,7 @@
 import time
 
-from constants import LOOPS
 from _binarysearch import benchmark_native_binary_search
+from constants import LOOPS
 
 if __name__ == "__main__":
     start = time.perf_counter()

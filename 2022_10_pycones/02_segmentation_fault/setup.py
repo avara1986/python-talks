@@ -1,7 +1,7 @@
-from setuptools import find_packages, setup
 # Import this after setuptools or it will fail
 import Cython.Distutils
 from Cython.Build import cythonize  # noqa: I100
+from setuptools import find_packages, setup
 
 extra_compile_args = [
     "-g",
@@ -20,6 +20,7 @@ if __name__ == "__main__":
                     language="c",
                     extra_compile_args=extra_compile_args,
                 ),
-            ], gdb_debug=True
+            ],
+            gdb_debug=True,
         )
     )
