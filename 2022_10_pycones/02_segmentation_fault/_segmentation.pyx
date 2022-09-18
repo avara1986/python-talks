@@ -1,62 +1,48 @@
-import cython
 import six
 
-from cpython.bytes cimport PyBytes_AsString, PyBytes_Size
+from cpython.bytes cimport PyBytes_AsString
 from cpython.unicode cimport PyUnicode_AsEncodedString
 
 
 cdef extern from "Python.h":
-    const char* PyUnicode_AsUTF8AndSize(object o, Py_ssize_t *size)
-
-ctypedef struct dd_object:
-    const char* parameterKey
-    const char* stringValue
+    const char * PyUnicode_AsUTF8AndSize(object o, Py_ssize_t *size)
 
 
-cdef class Wrapper(object):
-    cdef list strings_list
-    cdef list bytes_list
+cdef class BytesDict(object):
+    cdef dict bytes_dict
 
-    def __init__(self, list strings):
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
         cdef char * ptr
-        cdef ssize_t length = 0
-        self.strings_list = strings
-        self.bytes_list = []
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+        print("ptr")
+        print(ptr)
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+            v = self._string_to_bytes(v, &ptr)
+            bytes_value = ptr
+            self._update_dict(bytes_key, bytes_value)
 
-        results = []
-        for tuple_elements in self.strings_list:
-            print("element[0] %s" % tuple_elements[0])
-            print("element[1] %s" % tuple_elements[1])
-            self._string_to_bytes(tuple_elements[0], &ptr, &length)
-            key = ptr
-            self._string_to_bytes(tuple_elements[1], &ptr, &length)
-            value = ptr
-            self.bytes_list.append(self.build_result(&key, &value))
+    cdef _update_dict(self, char * bytes_key, char * bytes_value):
+        self.bytes_dict.update({bytes_key: bytes_value})
 
+    def __repr__(self):
+        return str(self.bytes_dict)
 
-    cdef object _string_to_bytes(self, object string, const char ** ptr, ssize_t *length):
+    cdef object _string_to_bytes(self, object string, char ** ptr):
         ptr[0] = NULL
         if isinstance(string, six.binary_type):
             ptr[0] = PyBytes_AsString(string)
-            length[0] = PyBytes_Size(string)
         elif isinstance(string, six.text_type):
             if ptr[0] == NULL:
                 string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
                 ptr[0] = PyBytes_AsString(string)
-                length[0] = PyBytes_Size(string)
         return string
 
-    cdef dd_object build_result(self, char ** key, char ** value):
-        cdef dd_object result_object
-        result_object.parameterKey = key[0]
-        result_object.stringValue = value[0]
-        return result_object
-
-    cdef long build_result2(self):
+    cpdef long create_list(self):
         cdef long array[5]
-        for i in range(6):
+        for i in range(0, 5):
             array[i] = -1
         return 0
-
-    def results(self):
-        return self.build_result()

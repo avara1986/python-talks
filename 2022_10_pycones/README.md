@@ -70,3 +70,7 @@ Elapsed time: 2.827[ns][nanoseconds]
 ./profiling.sh
 ```
 
+python setup.py build_ext --inplace
+python segmentation.py
+
+gdb --args python segmentation.py

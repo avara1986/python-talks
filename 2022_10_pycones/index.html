@@ -19,22 +19,38 @@
 				<section data-background-color="black">
 					<img data-src="revealjs/imgs/01.png">
 				</section>
-				<section data-markdown data-background-color="white">
-					<textarea data-template>
-					## Alberto Vara
-					<img src="revealjs/imgs/sillywalk.png" style="width: 50%;">
-					</textarea>
+				<section data-background-color="white">
+                    <h2> Alberto Vara</h2>
+                    <img src="revealjs/imgs/sillywalk.png" style="width: 50%;">
 				</section>
+                <section data-auto-animate>
+                    <h2>Motivacion</h2>
+                </section>
+                <section data-auto-animate>
+                    <h2>Motivacion</h2>
+                    <img src="revealjs/imgs/goto.png" style="width: 50%;">
+                </section>
+               <section data-auto-animate>
+                    <h2>Escenario</h2>
+                      <ul>
+                        <li>Instrumentar código</li>
+                        <li>Reducir al mínimo el tiempo extra (overhead)</li>
+                        <li>Python llega a un punto que no es optimo</li>
+                      </ul>
+                </section>
+               <section data-auto-animate>
+                    <h2>Escenario</h2>
+                      <ul>
+                        <li>Instrumentar código
+                            <ul><li>"Wrappear" codigo</li></ul>
+                            <ul><li>Monkey Patching</li></ul>
+                        </li>
+                        <li>Reducir al mínimo el tiempo extra (overhead)</li>
+                        <li>Python llega a un punto que no es optimo</li>
+                      </ul>
+                </section>
 				<section data-markdown >
 				  <textarea data-template>
-## Motivacion
-<img src="revealjs/imgs/goto.png" style="width: 50%;">
----
-## Escenario
-- Instrumentar código ("wrappear" codigo, Monkey Patching...)
-- Reducir al mínimo el tiempo extra (overhead)
-- Python llega a un punto que no es optimo
----
 `func_1` -> 3.06 µs. `func_6` -> 5.43 µs
 ```
 def func_1(a, b, c):
@@ -89,7 +105,7 @@ Alternativas:
 ---
 # CODE
 ---
-# CODE
+## Performance
 ---
 Python / Cython / C++ sin optimización. 10 bucles
 ```bash
@@ -107,6 +123,15 @@ Python / Cython / C++ optimización con referencia. 10 bucles
 +===============+=======================+=========================+
 | 30.6 us       | 20.8 us: 1.47x faster | 24.2 ms: 792.40x slower |
 +---------------+-----------------------+-------------------------+
+```
+---
+Python / Cython / C++ optimización con punteros. 10 bucles
+```bash
++---------------+-----------------------+-----------------------+
+| binary_search | cython_binary_search  | native_binary_search  |
++===============+=======================+=======================+
+| 31.6 us       | 21.0 us: 1.51x faster | 2.55 ms: 80.80x slower |
++---------------+-----------------------+-----------------------+
 ```
 ---
 Python / Cython / C++ optimización con punteros. 1.000 bucles
@@ -136,12 +161,29 @@ Python / Cython / C++ optimización con punteros. 100.000 bucles
 +---------------+----------------------+------------------------+
 ```
 ---
-Conclusion
-- Pasar variables entre lenguajes tiene un peaje
-- Para compensar el peaje, el numero de operaciones tiene que ser considerable
--
+## Segmentation Fault (Fest!)
+---
+## Conclusiones
+---
+Pasar variables entre lenguajes tiene un peaje.
+
+Para compensar el peaje, el numero de operaciones tiene que ser considerable
+---
+Cambio de paradigma de lenguajes como Python, PHP, JS a compilados como C o C++ es mayor
+---
+Cambio de paradigma de lenguajes como Python, PHP, JS a compilados como C o C++ es mayor
 				  </textarea>
 				</section>
+               <section data-background-color="white">
+                   <h2 >¡Muchas gracias por vuestro tiempo!</h2>
+                   <div>
+                      <img src="revealjs/imgs/datadoghq-ar21.svg" style="width: 50%;">
+                    </div>
+                   <div>
+                      <a href="https://www.datadoghq.com/careers/">We are hiring!<br>
+                       www.datadoghq.com/careers/</a>
+                   </div>
+                </section>
 				<!-- <section data-markdown="segemtationfaultfest.md"
 					 	data-separator="^\n\n\n"
 						data-separator-vertical="^\n\n"
