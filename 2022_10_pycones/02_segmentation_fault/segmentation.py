@@ -9,4 +9,3 @@ if __name__ == "__main__":
     }
     bytes_dict = BytesDict(strings_and_bytes_dict)
     print(bytes_dict)
-    # print(bytes_dict.create_list())

@@ -24,7 +24,7 @@ python -m pyperf compare_to --table results/binary_search_10.json results/cython
 
 ```
 cd src/
-cmake . && make && ./binarysearch 
+cmake . && make && ./binarysearch
 
 ./binarysearch 
 Elapsed time: 2.994[ms]

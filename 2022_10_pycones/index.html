@@ -362,7 +362,7 @@ cpdef void benchmark_native_binary_search(loops=10):
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-```cpp
+```cpp[3,5]
 cpdef void benchmark_native_binary_search(loops=10):
     cdef int len_search_list = len(SEARCH_LIST)
     cdef vector[int] my_list = SEARCH_LIST
@@ -374,7 +374,28 @@ cpdef void benchmark_native_binary_search(loops=10):
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
 ## Busqueda binaria C++
-```cpp[1-4-6]
+```cpp[1,4,6]
+int binsearch(vector<int>& my_list, int value, int low, int high) {
+    if (high >= low) {
+        int mid = (low + high) / 2;
+        if (my_list[mid] == value) {
+            return mid;
+        } else if (my_list[mid] > value) {
+            return binsearch(my_list, value, low, mid - 1);
+        } else {
+            return binsearch(my_list, value, mid + 1, high);
+        }
+    } else {
+        return -1;
+    }
+}
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+## Busqueda binaria C++
+```cpp[1,4,6]
 int binsearch(vector<int>* my_list, int value, int low, int high) {
     if (high >= low) {
         int mid = (low + high) / 2;
@@ -394,37 +415,96 @@ int binsearch(vector<int>* my_list, int value, int low, int high) {
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-Python / Cython / C++ optimización con punteros. 10 bucles
+
+Otimización con punteros. 10 bucles
 
 | Python        | Cython                | C++                      |
 |---------------|-----------------------|--------------------------|
-| 31.6 us       | 21.0 us: 1.51x faster | 2.55 ms: 80.80x slower |
+| 31.6 us       | 21.0 us: 1.51x faster | 2.55 ms: 80.80x slower   |
 
+<img src="https://i.giphy.com/media/dJYoOVAWf2QkU/giphy.webp" />
 ---
-Python / Cython / C++ optimización con punteros. 1.000 bucles
+Y si...
+---
+Otimización con punteros. 1.000 bucles
 
 | Python        | Cython                | C++                   |
 |---------------|-----------------------|-----------------------|
 | 3.06 ms       | 1.97 ms: 1.55x faster | 2.66 ms: 1.15x faster |
 
 ---
-Python / Cython / C++ optimización con punteros. 10.000 bucles
+Optimización con punteros. 10.000 bucles
 
 | Python        | Cython                | C++                   |
 |---------------|-----------------------|-----------------------|
 | 30.2 ms       | 19.5 ms: 1.55x faster | 3.91 ms: 7.73x faster |
 
 ---
-Python / Cython / C++ optimización con punteros. 100.000 bucles
+Optimización con punteros. 100.000 bucles
 
 | Python        | Cython                | C++                   |
 |---------------|-----------------------|-----------------------|
 | 304 ms        | 193 ms: 1.58x faster | 14.9 ms: 20.40x faster |
 
+<img src="https://i.giphy.com/media/7Wzz7Hw1PqZOM/giphy.webp" />
+
 ---
 ## Segmentation Fault (Fest!)
 <img src="https://i.giphy.com/media/kWZMl5xCnfOSI/giphy.webp" />
----
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python
+    strings_and_bytes_dict = {
+        "barba": "coa",
+        "aaa": b"value_aaa",
+        "bbb": b"value_bbb",
+        "ccc": "value_ccc",
+    }
+    bytes_dict = BytesDict(strings_and_bytes_dict)
+    print(bytes_dict)
+
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python
+cdef class BytesDict(object):
+    cdef dict bytes_dict
+
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
+        cdef char * ptr
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+            v = self._string_to_bytes(v, &ptr)
+            bytes_value = ptr
+            self._update_dict(bytes_key, bytes_value)
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python
+cdef object _string_to_bytes(self, object string, char ** ptr):
+    if isinstance(string, six.binary_type):
+        ptr[0] = PyBytes_AsString(string)
+    elif isinstance(string, six.text_type):
+        if ptr[0] == NULL:
+            string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
+            ptr[0] = PyBytes_AsString(string)
+    return string
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
 ## Conclusiones
 ---
 Pasar variables entre lenguajes tiene un peaje. Como la latencia de red entre microservicios
