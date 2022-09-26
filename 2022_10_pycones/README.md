@@ -1,4 +1,4 @@
-```angular2html
+```bash
 vim 01_happy_path/binarysearch.py
 vim 01_happy_path/_binarysearch.pyx
 vim 01_happy_path/src/binarysearch.cpp
