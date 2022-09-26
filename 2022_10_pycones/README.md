@@ -33,9 +33,9 @@ Elapsed time: 2.994.433.429[ns][nanoseconds]
 ```
 
 
-export PY_LOOPS=10
+export PY_LOOPS=1000
 py-spy record --native --format speedscope --rate 1000 -o flamegraphs/binarysearch_native.prof -- python binarysearch_native.py
-export PY_LOOPS=10000
+export PY_LOOPS=10
 py-spy record --native --format speedscope --rate 1000 -o flamegraphs/binarysearch_cython.prof -- python binarysearch_cython.py
 ./profiling.sh
 google-chrome flamegraphs/binarysearch_cython.svg

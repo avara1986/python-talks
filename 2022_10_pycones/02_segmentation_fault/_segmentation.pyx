@@ -16,8 +16,7 @@ cdef class BytesDict(object):
         cdef char * ptr
         cdef char * bytes_key = NULL
         cdef char * bytes_value = NULL
-        print("ptr")
-        print(ptr)
+
         for k, v in strings_dict.items():
             k = self._string_to_bytes(k, &ptr)
             bytes_key = ptr
@@ -32,7 +31,6 @@ cdef class BytesDict(object):
         return str(self.bytes_dict)
 
     cdef object _string_to_bytes(self, object string, char ** ptr):
-        ptr[0] = NULL
         if isinstance(string, six.binary_type):
             ptr[0] = PyBytes_AsString(string)
         elif isinstance(string, six.text_type):

@@ -1,8 +1,7 @@
+from setuptools import setup
 # Import this after setuptools or it will fail
 import Cython.Distutils
 from Cython.Build import cythonize  # noqa: I100
-from setuptools import find_packages, setup
-
 extra_compile_args = [
     "-g",
     "-O0",
@@ -17,7 +16,7 @@ if __name__ == "__main__":
                 Cython.Distutils.Extension(
                     "_segmentation",
                     sources=["_segmentation.pyx"],
-                    language="c",
+                    language="c++",
                     extra_compile_args=extra_compile_args,
                 ),
             ],

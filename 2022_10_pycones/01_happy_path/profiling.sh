@@ -14,6 +14,6 @@
 # PY-SPY
 export PY_LOOPS=100
 py-spy record --rate 1000 --native -o flamegraphs/binarysearch_native.svg -- python binarysearch_native.py
-export PY_LOOPS=100000
+export PY_LOOPS=10
 py-spy record --rate 1000 --native -o flamegraphs/binarysearch_cython.svg -- python binarysearch_cython.py
 

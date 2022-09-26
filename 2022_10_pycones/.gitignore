@@ -21,6 +21,5 @@ __pycache__/*
 01_happy_path/src/binarysearch
 01_happy_path/src/CMakeCache.txt
 01_happy_path/cython_debug/
-01_happy_path/flamegraphs/
 
 *.log
