@@ -249,6 +249,8 @@ Sin optimización. 10 bucles
 | Python        | Cython                | C++                      |
 |---------------|-----------------------|--------------------------|
 | 30.9 us       | 21.2 us: 1.46x faster | 42.5 ms: 1372.82x slower |
+
+<img src="https://i.giphy.com/media/SqmkZ5IdwzTP2/giphy.webp" />
 ---
 ```cpp
 #include <chrono>
@@ -432,6 +434,7 @@ Otimización con punteros. 1.000 bucles
 |---------------|-----------------------|-----------------------|
 | 3.06 ms       | 1.97 ms: 1.55x faster | 2.66 ms: 1.15x faster |
 
+<img src="https://i.giphy.com/media/mvyByQFywcRaw/giphy.webp" />
 ---
 Optimización con punteros. 10.000 bucles
 
@@ -505,17 +508,20 @@ cdef object _string_to_bytes(self, object string, char ** ptr):
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-```
+```bash
+python setup.py build_ext --inplace
 python segmentation.py
 [1]    40755 segmentation fault (core dumped)  python segmentation.py
 ```
 ---
-```
+```bash
 gdb --args python segmentation.py
 Reading symbols from python...
 (No debugging symbols found in python)
 (gdb)
-
+```
+---
+```bash
 (gdb) r
 Starting program: /home/alberto.vara/mio/python-talks/2022_10_pycones/venv/bin/python segmentation.py
 [Thread debugging using libthread_db enabled]
@@ -523,11 +529,13 @@ Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
 
 Program received signal SIGSEGV, Segmentation fault.
 0x00000000006b842e in PyBytes_FromString ()
-
+gdb)
+```
+---
+```bash[1|0|3]
 gdb) backtrace
 #0  0x00000000006b842e in PyBytes_FromString ()
-#1  0x00007ffff7fb4b48 in __pyx_f_13_segmentation_9BytesDict__update_dict (__pyx_v_self=0x7ffff71e6f70, __pyx_v_bytes_key=0x25 <error: Cannot access memory at address 0x25>, __pyx_v_bytes_value=0x25 <error: Cannot access memory at address 0x25>)
-    at _segmentation.cpp:1912
+#1  0x00007ffff7fb4b48 in __pyx_f_13_segmentation_9BytesDict__update_dict (__pyx_v_self=0x7ffff71e6f70, __pyx_v_bytes_key=0x25 <error: Cannot access memory at address 0x25>, __pyx_v_bytes_value=0x25 <error: Cannot access memory at address 0x25>) at _segmentation.cpp:1912
 #2  0x00007ffff7fb4918 in __pyx_pf_13_segmentation_9BytesDict___init__ (__pyx_v_self=0x7ffff71e6f70, __pyx_v_strings_dict=0x7ffff733d100) at _segmentation.cpp:1840
 #3  0x00007ffff7fb3fa0 in __pyx_pw_13_segmentation_9BytesDict_1__init__ (__pyx_v_self=0x7ffff71e6f70, __pyx_args=0x7ffff739b4c0, __pyx_kwds=0x0) at _segmentation.cpp:1622
 #4  0x00000000005f745f in _PyObject_MakeTpCall ()
@@ -540,11 +548,96 @@ gdb) backtrace
 #11 0x0000000000681b97 in PyRun_SimpleFileExFlags ()
 #12 0x00000000006b9d32 in Py_RunMain ()
 #13 0x00000000006ba0bd in Py_BytesMain ()
+
 --Type <RET> for more, q to quit, c to continue without paging--x00007ffff7fb4b48 in __pyx_f_13_segmentation_9BytesDict__update_dict (__pyx_v_self=0x7ffff71e6f70, __pyx_v_bytes_key=0x25 <error: Cannot access memory at address 0x25>, __pyx_v_bytes_value=0x25 <error: Cannot access memory at address 0x25>)
 #14 0x00007ffff7de0083 in __libc_start_main (main=0x4efd60 <main>, argc=2, argv=0x7fffffffd868, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7fffffffd858) at ../csu/libc-start.c:308
 #15 0x00000000005fc5fe in _start ()
 ```
 
+                  </textarea>
+                </section>
+				<section data-markdown>
+				  <textarea data-template>
+```python[6]
+for k, v in strings_dict.items():
+    k = self._string_to_bytes(k, &ptr)
+    bytes_key = ptr
+    v = self._string_to_bytes(v, &ptr)
+    bytes_value = ptr
+    self._update_dict(bytes_key, bytes_value)
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[5]
+cdef object _string_to_bytes(self, object string, char ** ptr):
+    if isinstance(string, six.binary_type):
+        ptr[0] = PyBytes_AsString(string)
+    elif isinstance(string, six.text_type):
+        if ptr[0] == NULL:
+            string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
+            ptr[0] = PyBytes_AsString(string)
+    return string
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[2]
+cdef object _string_to_bytes(self, object string, char ** ptr):
+    ptr[0] = NULL
+    if isinstance(string, six.binary_type):
+        ptr[0] = PyBytes_AsString(string)
+    elif isinstance(string, six.text_type):
+        if ptr[0] == NULL:
+            string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
+            ptr[0] = PyBytes_AsString(string)
+    return string
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[3]
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
+        cdef char * ptr
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[3]
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
+        cdef char * ptr = NULL
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+```
+                  </textarea>
+                </section>
+				<section data-markdown>
+				  <textarea data-template>
+```bash
+python setup.py build_ext --inplace
+python segmentation.py
+```
+```bash
+{b'barba': b'value_aaa', b'value_aaa': b'value_bbb', b'value_bbb': b'value_bbb'}
+```
+---
+<img src="revealjs/imgs/link.gif" />
 ---
 ## Conclusiones
 ---
