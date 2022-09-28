@@ -8,17 +8,33 @@
 
 		<link rel="stylesheet" href="revealjs/dist/reset.css">
 		<link rel="stylesheet" href="revealjs/dist/reveal.css">
-		<link rel="stylesheet" href="revealjs/dist/theme/black.css">
+		<link rel="stylesheet" href="revealjs/dist/theme/sky.css">
 
 		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="revealjs/plugin/highlight/monokai.css">
-        <!-- <link rel="stylesheet" href="revealjs/plugin/highlight/zenburn.css"> -->
+		<!--<link rel="stylesheet" href="revealjs/plugin/highlight/monokai.css">-->
+        <link rel="stylesheet" href="revealjs/plugin/highlight/one-light.min.css">
         <style>
             .reveal pre code {
-                font-size: 16px;
+                font-size: 40px;
+                line-height: 4px;
+                max-height: 650px;
             }
-            .reveal table {
-                font-size: 65%;
+            .reveal .code-wrapper code {
+                font-size: 40px;
+                line-height: 48px;
+                max-height: 600px;
+            }
+            .reveal .hljs table {
+                font-size: 90%;
+            }
+            ::-moz-selection {
+              color: red;
+              background: yellow;
+            }
+
+            ::selection {
+              color: red;
+              background: yellow !important;
             }
         </style>
 	</head>
@@ -26,24 +42,23 @@
 		<div class="reveal">
 			<div class="slides">
 				<section data-background-color="black">
-					<img data-src="revealjs/imgs/01.png">
+					<img data-src="revealjs/imgs/01.png" style="width: 70%;">
 				</section>
 				<section data-background-color="white">
                     <h2> Alberto Vara</h2>
-                    <img src="revealjs/imgs/sillywalk.png" style="width: 50%;">
+                    <img src="revealjs/imgs/sillywalk.png" style="width: 20%;">
 				</section>
 				<section data-background-color="white">
                     <h2>Descargar presentación/Codigo fuente</h2>
                     <a href="https://github.com/avara1986/python-talks/tree/main/2022_10_pycones">
                         github.com/avara1986/python-talks/2022_10_pycones</a>
-                    <img src="revealjs/imgs/sillywalk.png" style="width: 50%;">
 				</section>
                 <section data-auto-animate>
                     <h2>Motivacion</h2>
                 </section>
                 <section data-auto-animate>
                     <h2>Motivacion</h2>
-                    <img src="revealjs/imgs/goto.png" style="width: 50%;">
+                    <img src="revealjs/imgs/goto.png" style="width: 20%;">
                 </section>
                <section data-auto-animate>
                     <h2>Escenario</h2>
@@ -87,7 +102,7 @@ def func_6(a, b, c):
     return func_5(a, b, c)
 ```
 ---
-## Introducción
+## Herramientas/librerías
 - Cython
 - Pyperf
 - Py-spy
@@ -95,7 +110,11 @@ def func_6(a, b, c):
 ## En materia
 - Rendimiento
 - Segmentation Faults
----
+                  </textarea>
+                </section>
+                <!--
+				<section data-markdown >
+				  <textarea data-template>
 ## Cython como proxy
 Alternativas:
 - Pybind11
@@ -116,20 +135,22 @@ Alternativas:
 ## Flame Graphs
 <img src="revealjs/imgs/binarysearch_native.svg" style="width: 100%;">
 ---
-## gdb
----
-# CODE
----
-## Performance
+## GDB
+                  </textarea>
+                </section>
+                -->
+				<section data-markdown >
+				  <textarea data-template>
+# Performance
 <img src="https://i.giphy.com/media/ZN9wnUXQyIayXXyLnK/giphy.webp" />
                   </textarea>
                 </section>
 				<section data-markdown >
 				  <textarea data-template>
-## Busqueda binaria Python
+## Búsqueda binaria Python
 ```python
 # binarysearch.py
-def binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
+def binary_search(l: List[int], value: int, low: int, high: int):
     if high >= low:
         mid = (high + low) // 2
         if l[mid] == value:
@@ -142,7 +163,11 @@ def binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
         return -1
 ```
 ---
-## Busqueda binaria Python
+## Búsqueda binaria Python
+
+```python
+SEARCH_LIST = [i for i in range(100000)]
+```
 ```python
 # binarysearch.py
 def benchmark_binary_search(loops: int = 10) -> None:
@@ -154,10 +179,10 @@ def benchmark_binary_search(loops: int = 10) -> None:
                 </section>
 				<section data-markdown >
 				  <textarea data-template>
-## Busqueda binaria Cython
+## Búsqueda binaria Cython
 ```python
 # _binarysearch.pyx
-cdef int cython_binary_search(l: List[int], value: int, low: int = 0, high: int = -1):
+cdef int cython_binary_search(l: List[int], value: int, low: int, high: int):
     if high >= low:
         mid = (high + low) // 2
         if l[mid] == value:
@@ -173,7 +198,7 @@ cdef int cython_binary_search(l: List[int], value: int, low: int = 0, high: int 
                 </section>
 				<section data-markdown >
 				  <textarea data-template>
-## Busqueda binaria C++
+## Búsqueda binaria C++
 ```python
 # src/binarysearch.hpp
 int binsearch(vector<int> my_list, int value, int low, int high) {
@@ -193,7 +218,7 @@ int binsearch(vector<int> my_list, int value, int low, int high) {
 ```
 
 ---
-## Busqueda binaria C++
+## Búsqueda binaria C++
 ```python
 # _binarysearch.pyx
 cdef extern from "src/binarysearch.hpp":
@@ -285,7 +310,7 @@ Elapsed time: 2.994.433.429[ns][nanoseconds]
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-## Busqueda binaria C++
+## Búsqueda binaria C++
 ```cpp[1]
 int binsearch(vector<int> my_list, int value, int low, int high) {
     if (high >= low) {
@@ -306,7 +331,7 @@ int binsearch(vector<int> my_list, int value, int low, int high) {
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-## Busqueda binaria C++
+## Búsqueda binaria C++
 ```cpp[1]
 int binsearch(vector<int>& my_list, int value, int low, int high) {
     if (high >= low) {
@@ -375,7 +400,7 @@ cpdef void benchmark_native_binary_search(loops=10):
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-## Busqueda binaria C++
+## Búsqueda binaria C++
 ```cpp[1,4,6]
 int binsearch(vector<int>& my_list, int value, int low, int high) {
     if (high >= low) {
@@ -396,7 +421,7 @@ int binsearch(vector<int>& my_list, int value, int low, int high) {
                 </section>
 				<section data-markdown data-auto-animate>
 				  <textarea data-template>
-## Busqueda binaria C++
+## Búsqueda binaria C++
 ```cpp[1,4,6]
 int binsearch(vector<int>* my_list, int value, int low, int high) {
     if (high >= low) {
@@ -452,7 +477,7 @@ Optimización con punteros. 100.000 bucles
 <img src="https://i.giphy.com/media/7Wzz7Hw1PqZOM/giphy.webp" />
 
 ---
-## Segmentation Fault (Fest!)
+# Segmentation Fault (Fest!)
 <img src="https://i.giphy.com/media/kWZMl5xCnfOSI/giphy.webp" />
                   </textarea>
                 </section>
@@ -637,19 +662,23 @@ python segmentation.py
 {b'barba': b'value_aaa', b'value_aaa': b'value_bbb', b'value_bbb': b'value_bbb'}
 ```
 ---
-<img src="revealjs/imgs/link.gif" />
----
 ## Conclusiones
 ---
-Pasar variables entre lenguajes tiene un peaje. Como la latencia de red entre microservicios
+## Pasar variables entre lenguajes tiene un peaje
+
+P.E: Como la latencia de red entre microservicios
+
 <img src="https://i.giphy.com/media/3oEduIwLTB806poveg/giphy.webp" />
 ---
+## No todo se puede migrar
 Para compensar el peaje, el numero de operaciones tiene que ser considerable, lo que dificulta una migración
 ---
-Cambio de paradigma de lenguajes como Python, PHP, JS a compilados como C o C++ es mayor
+## Cambio de paradigma
+IMHO, Cambio de paradigma lenguajes como Python, PHP, JS a compilados C o C++ es mayor
 ---
-¿He mencionado el uso de memoria en C++?
-<img src="https://i.giphy.com/media/10pWNtwPuDacvK/giphy.webp" style="width: 50%;">
+## ¿He mencionado el uso de memoria en C++?
+
+<img src="https://i.giphy.com/media/10pWNtwPuDacvK/giphy.webp" style="width: 25%;">
 
 				  </textarea>
 				</section>
@@ -681,7 +710,14 @@ Cambio de paradigma de lenguajes como Python, PHP, JS a compilados como C o C++ 
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
-
+                width: 1920,
+                height: 1080,
+                // Factor of the display size that should remain empty around
+                // the content
+                margin: 0.1,
+                // Bounds for smallest/largest possible scale to apply to content
+                minScale: 1.0,
+                maxScale: 3.0,
 				// Learn about plugins: https://revealjs.com/plugins/
 				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
 			});
