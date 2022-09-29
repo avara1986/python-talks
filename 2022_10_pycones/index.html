@@ -1,0 +1,726 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="revealjs/dist/reset.css">
+		<link rel="stylesheet" href="revealjs/dist/reveal.css">
+		<link rel="stylesheet" href="revealjs/dist/theme/sky.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<!--<link rel="stylesheet" href="revealjs/plugin/highlight/monokai.css">-->
+        <link rel="stylesheet" href="revealjs/plugin/highlight/one-light.min.css">
+        <style>
+            .reveal pre code {
+                font-size: 40px;
+                line-height: 4px;
+                max-height: 650px;
+            }
+            .reveal .code-wrapper code {
+                font-size: 40px;
+                line-height: 48px;
+                max-height: 600px;
+            }
+            .reveal .hljs table {
+                font-size: 90%;
+            }
+            ::-moz-selection {
+              color: red;
+              background: yellow;
+            }
+
+            ::selection {
+              color: red;
+              background: yellow !important;
+            }
+        </style>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-color="black">
+					<img data-src="revealjs/imgs/01.png" style="width: 70%;">
+				</section>
+				<section data-background-color="white">
+                    <h2> Alberto Vara</h2>
+                    <img src="revealjs/imgs/sillywalk.png" style="width: 20%;">
+				</section>
+				<section data-background-color="white">
+                    <h2>Descargar presentación/Codigo fuente</h2>
+                    <a href="https://github.com/avara1986/python-talks/tree/main/2022_10_pycones">
+                        github.com/avara1986/python-talks/2022_10_pycones</a>
+				</section>
+                <section data-auto-animate>
+                    <h2>Motivacion</h2>
+                </section>
+                <section data-auto-animate>
+                    <h2>Motivacion</h2>
+                    <img src="revealjs/imgs/goto.png" style="width: 20%;">
+                </section>
+               <section data-auto-animate>
+                    <h2>Escenario</h2>
+                      <ul>
+                        <li>Instrumentar código</li>
+                        <li>Reducir al mínimo el tiempo extra (overhead)</li>
+                        <li>Python llega a un punto que no es optimo</li>
+                      </ul>
+                </section>
+               <section data-auto-animate>
+                    <h2>Escenario</h2>
+                      <ul>
+                        <li>Instrumentar código
+                            <ul><li>"Wrappear" codigo</li></ul>
+                            <ul><li>Monkey Patching</li></ul>
+                        </li>
+                        <li>Reducir al mínimo el tiempo extra (overhead)</li>
+                        <li>Python llega a un punto que no es optimo</li>
+                      </ul>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+`func_1` -> 3.06 µs. `func_6` -> 5.43 µs
+```
+def func_1(a, b, c):
+    return f"hello {a} {b} {c}"
+
+def func_2(a, b, c):
+    return func_1(a, b, c)
+
+def func_3(a, b, c):
+    return func_2(a, b, c)
+
+def func_4(a, b, c):
+    return func_3(a, b, c)
+
+def func_5(a, b, c):
+    return func_4(a, b, c)
+
+def func_6(a, b, c):
+    return func_5(a, b, c)
+```
+---
+## Herramientas/librerías
+- Cython
+- Pyperf
+- Py-spy
+- Gdb
+## En materia
+- Rendimiento
+- Segmentation Faults
+                  </textarea>
+                </section>
+                <!--
+				<section data-markdown >
+				  <textarea data-template>
+## Cython como proxy
+Alternativas:
+- Pybind11
+- Boost Python
+- Cpython
+---
+## Pyperf
+Alternativas:
+- ASV
+- Valgrind
+---
+## py-spy
+Alternativas:
+- CProfile (pstats)
+- pyinstrument
+- austin
+---
+## Flame Graphs
+<img src="revealjs/imgs/binarysearch_native.svg" style="width: 100%;">
+---
+## GDB
+                  </textarea>
+                </section>
+                -->
+				<section data-markdown >
+				  <textarea data-template>
+# Performance
+<img src="https://i.giphy.com/media/ZN9wnUXQyIayXXyLnK/giphy.webp" />
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+## Búsqueda binaria Python
+```python
+# binarysearch.py
+def binary_search(l: List[int], value: int, low: int, high: int):
+    if high >= low:
+        mid = (high + low) // 2
+        if l[mid] == value:
+            return mid
+        elif l[mid] > value:
+            return binary_search(l, value, low, mid - 1)
+        else:
+            return binary_search(l, value, mid + 1, high)
+    else:
+        return -1
+```
+---
+## Búsqueda binaria Python
+
+```python
+SEARCH_LIST = [i for i in range(100000)]
+```
+```python
+# binarysearch.py
+def benchmark_binary_search(loops: int = 10) -> None:
+    len_search_list = len(SEARCH_LIST)
+    for i in range(0, loops):
+        binary_search(SEARCH_LIST, 66666, 0, len_search_list)
+```
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+## Búsqueda binaria Cython
+```python
+# _binarysearch.pyx
+cdef int cython_binary_search(l: List[int], value: int, low: int, high: int):
+    if high >= low:
+        mid = (high + low) // 2
+        if l[mid] == value:
+            return mid
+        elif l[mid] > value:
+            return cython_binary_search(l, value, low, mid - 1)
+        else:
+            return cython_binary_search(l, value, mid + 1, high)
+    else:
+        return -1
+```
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+## Búsqueda binaria C++
+```python
+# src/binarysearch.hpp
+int binsearch(vector<int> my_list, int value, int low, int high) {
+    if (high >= low) {
+        int mid = (low + high) / 2;
+        if (my_list[mid] == value) {
+            return mid;
+        } else if (my_list[mid] > value) {
+            return binsearch(my_list, value, low, mid - 1);
+        } else {
+            return binsearch(my_list, value, mid + 1, high);
+        }
+    } else {
+        return -1;
+    }
+}
+```
+
+---
+## Búsqueda binaria C++
+```python
+# _binarysearch.pyx
+cdef extern from "src/binarysearch.hpp":
+    int binsearch(vector[int] l, int value, int low, int high)
+
+cpdef void benchmark_native_binary_search(loops=10):
+    cdef int len_search_list = len(SEARCH_LIST)
+    for i in range(0, loops):
+        binsearch(SEARCH_LIST, 66666, 0, len_search_list)
+```
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+## Benchmarks con Pyperf
+```python
+# Inicializamos el runner
+runner = pyperf.Runner(add_cmdline_args=add_cmdline_args)
+cmd = runner.argparser
+
+# Personalizamos los parámetros del cliente
+cmd.add_argument("-f", "--function_name", default="", type=str)
+cmd.add_argument("-i", "--inner_loops", default=10, type=int)
+parsed_args = runner.parse_args()
+function_name = parsed_args.function_name
+inner_loops = int(parsed_args.inner_loops)
+
+if function_name == "binary_search":
+    runner.bench_func("happy_path_{}".format(inner_loops),
+                      benchmark_binary_search, inner_loops)
+...
+```
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+## Benchmarks con Pyperf
+```bash
+python benchmark.py -f native_binary_search -i 10 -o native_binary_search_10.json
+python benchmark.py -f cython_binary_search -i 10 -o cython_binary_search_10.json
+python benchmark.py -f binary_search -i 10 -o binary_search_10.json
+
+python -m pyperf compare_to --table binary_search_10.json \
+                      cython_binary_search_10.json \
+                      native_binary_search_10.json
+```
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+Sin optimización. 10 bucles
+
+| Python        | Cython                | C++                      |
+|---------------|-----------------------|--------------------------|
+| 30.9 us       | 21.2 us: 1.46x faster | 42.5 ms: 1372.82x slower |
+
+<img src="https://i.giphy.com/media/SqmkZ5IdwzTP2/giphy.webp" />
+---
+```cpp
+#include <chrono>
+#include "binarysearch.hpp"
+
+
+int main(int argc, char *argv[]) {
+    vector<int> arr;
+    for (int i = 0; i < 1000000; i++) arr.push_back(i);
+
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    for (int i = 0; i < 10; i++) {
+        binsearch(arr, 66666, 0, arr.size());
+    }
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << "[ms]\n";
+    cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << "[µs]\n";
+    cout << "Elapsed time: " << std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count() << "[ns]\n";
+}
+```
+---
+```
+cmake . && make && ./binarysearch
+```
+```
+./binarysearch
+Elapsed time: 2.994[ms]
+Elapsed time: 2.994.433[µs][microseconds]
+Elapsed time: 2.994.433.429[ns][nanoseconds]
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+## Búsqueda binaria C++
+```cpp[1]
+int binsearch(vector<int> my_list, int value, int low, int high) {
+    if (high >= low) {
+        int mid = (low + high) / 2;
+        if (my_list[mid] == value) {
+            return mid;
+        } else if (my_list[mid] > value) {
+            return binsearch(my_list, value, low, mid - 1);
+        } else {
+            return binsearch(my_list, value, mid + 1, high);
+        }
+    } else {
+        return -1;
+    }
+}
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+## Búsqueda binaria C++
+```cpp[1]
+int binsearch(vector<int>& my_list, int value, int low, int high) {
+    if (high >= low) {
+        int mid = (low + high) / 2;
+        if (my_list[mid] == value) {
+            return mid;
+        } else if (my_list[mid] > value) {
+            return binsearch(my_list, value, low, mid - 1);
+        } else {
+            return binsearch(my_list, value, mid + 1, high);
+        }
+    } else {
+        return -1;
+    }
+}
+```
+                  </textarea>
+                </section>
+				<section data-markdown >
+				  <textarea data-template>
+```
+cmake . && make && ./binarysearch
+```
+```
+./binarysearch
+Elapsed time: 0[ms]
+Elapsed time: 2[µs][microseconds]
+Elapsed time: 2.827[ns][nanoseconds]
+```
+---
+Con optimización. 10 bucles
+
+| Python        | Cython                | C++                      |
+|---------------|-----------------------|--------------------------|
+| 30.6 us       | 20.8 us: 1.47x faster | 24.2 ms: 792.40x slower  |
+
+---
+```bash
+py-spy record --rate 1000 --native \
+    -o flamegraphs/binarysearch_native_01.svg -- python binarysearch_native.py
+```
+---
+<img src="revealjs/imgs/flamegraphs/binarysearch_native_01.svg" />
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```cpp[4]
+cpdef void benchmark_native_binary_search(loops=10):
+    cdef int len_search_list = len(SEARCH_LIST)
+    for i in range(0, loops):
+        binsearch(SEARCH_LIST, 66666, 0, len_search_list)
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```cpp[3,5]
+cpdef void benchmark_native_binary_search(loops=10):
+    cdef int len_search_list = len(SEARCH_LIST)
+    cdef vector[int] my_list = SEARCH_LIST
+    for i in range(0, loops):
+        binsearch(&my_list, 66666, 0, len_search_list)
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+## Búsqueda binaria C++
+```cpp[1,4,6]
+int binsearch(vector<int>& my_list, int value, int low, int high) {
+    if (high >= low) {
+        int mid = (low + high) / 2;
+        if (my_list[mid] == value) {
+            return mid;
+        } else if (my_list[mid] > value) {
+            return binsearch(my_list, value, low, mid - 1);
+        } else {
+            return binsearch(my_list, value, mid + 1, high);
+        }
+    } else {
+        return -1;
+    }
+}
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+## Búsqueda binaria C++
+```cpp[1,4,6]
+int binsearch(vector<int>* my_list, int value, int low, int high) {
+    if (high >= low) {
+        int mid = (low + high) / 2;
+        if ((*my_list)[mid] == value) {
+            return mid;
+        } else if ((*my_list)[mid] > value) {
+            return binsearch(my_list, value, low, mid - 1);
+        } else {
+            return binsearch(my_list, value, mid + 1, high);
+        }
+    } else {
+        return -1;
+    }
+}
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+
+Otimización con punteros. 10 bucles
+
+| Python        | Cython                | C++                      |
+|---------------|-----------------------|--------------------------|
+| 31.6 us       | 21.0 us: 1.51x faster | 2.55 ms: 80.80x slower   |
+
+<img src="https://i.giphy.com/media/dJYoOVAWf2QkU/giphy.webp" />
+---
+Y si...
+---
+Otimización con punteros. 1.000 bucles
+
+| Python        | Cython                | C++                   |
+|---------------|-----------------------|-----------------------|
+| 3.06 ms       | 1.97 ms: 1.55x faster | 2.66 ms: 1.15x faster |
+
+<img src="https://i.giphy.com/media/mvyByQFywcRaw/giphy.webp" />
+---
+Optimización con punteros. 10.000 bucles
+
+| Python        | Cython                | C++                   |
+|---------------|-----------------------|-----------------------|
+| 30.2 ms       | 19.5 ms: 1.55x faster | 3.91 ms: 7.73x faster |
+
+---
+Optimización con punteros. 100.000 bucles
+
+| Python        | Cython                | C++                   |
+|---------------|-----------------------|-----------------------|
+| 304 ms        | 193 ms: 1.58x faster | 14.9 ms: 20.40x faster |
+
+<img src="https://i.giphy.com/media/7Wzz7Hw1PqZOM/giphy.webp" />
+
+---
+# Segmentation Fault (Fest!)
+<img src="https://i.giphy.com/media/kWZMl5xCnfOSI/giphy.webp" />
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python
+    strings_and_bytes_dict = {
+        "barba": "coa",
+        "aaa": b"value_aaa",
+        "bbb": b"value_bbb",
+        "ccc": "value_ccc",
+    }
+    bytes_dict = BytesDict(strings_and_bytes_dict)
+    print(bytes_dict)
+
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python
+cdef class BytesDict(object):
+    cdef dict bytes_dict
+
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
+        cdef char * ptr
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+            v = self._string_to_bytes(v, &ptr)
+            bytes_value = ptr
+            self._update_dict(bytes_key, bytes_value)
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python
+cdef object _string_to_bytes(self, object string, char ** ptr):
+    if isinstance(string, six.binary_type):
+        ptr[0] = PyBytes_AsString(string)
+    elif isinstance(string, six.text_type):
+        if ptr[0] == NULL:
+            string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
+            ptr[0] = PyBytes_AsString(string)
+    return string
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```bash
+python setup.py build_ext --inplace
+python segmentation.py
+[1]    40755 segmentation fault (core dumped)  python segmentation.py
+```
+---
+```bash
+gdb --args python segmentation.py
+Reading symbols from python...
+(No debugging symbols found in python)
+(gdb)
+```
+---
+```bash
+(gdb) r
+Starting program: /home/alberto.vara/mio/python-talks/2022_10_pycones/venv/bin/python segmentation.py
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Program received signal SIGSEGV, Segmentation fault.
+0x00000000006b842e in PyBytes_FromString ()
+gdb)
+```
+---
+```bash[1|0|3]
+gdb) backtrace
+#0  0x00000000006b842e in PyBytes_FromString ()
+#1  0x00007ffff7fb4b48 in __pyx_f_13_segmentation_9BytesDict__update_dict (__pyx_v_self=0x7ffff71e6f70, __pyx_v_bytes_key=0x25 <error: Cannot access memory at address 0x25>, __pyx_v_bytes_value=0x25 <error: Cannot access memory at address 0x25>) at _segmentation.cpp:1912
+#2  0x00007ffff7fb4918 in __pyx_pf_13_segmentation_9BytesDict___init__ (__pyx_v_self=0x7ffff71e6f70, __pyx_v_strings_dict=0x7ffff733d100) at _segmentation.cpp:1840
+#3  0x00007ffff7fb3fa0 in __pyx_pw_13_segmentation_9BytesDict_1__init__ (__pyx_v_self=0x7ffff71e6f70, __pyx_args=0x7ffff739b4c0, __pyx_kwds=0x0) at _segmentation.cpp:1622
+#4  0x00000000005f745f in _PyObject_MakeTpCall ()
+#5  0x0000000000570d55 in _PyEval_EvalFrameDefault ()
+#6  0x0000000000569dba in _PyEval_EvalCodeWithName ()
+#7  0x00000000006902a7 in PyEval_EvalCode ()
+#8  0x000000000067f951 in ?? ()
+#9  0x000000000067f9cf in ?? ()
+#10 0x000000000067fa71 in ?? ()
+#11 0x0000000000681b97 in PyRun_SimpleFileExFlags ()
+#12 0x00000000006b9d32 in Py_RunMain ()
+#13 0x00000000006ba0bd in Py_BytesMain ()
+
+--Type <RET> for more, q to quit, c to continue without paging--x00007ffff7fb4b48 in __pyx_f_13_segmentation_9BytesDict__update_dict (__pyx_v_self=0x7ffff71e6f70, __pyx_v_bytes_key=0x25 <error: Cannot access memory at address 0x25>, __pyx_v_bytes_value=0x25 <error: Cannot access memory at address 0x25>)
+#14 0x00007ffff7de0083 in __libc_start_main (main=0x4efd60 <main>, argc=2, argv=0x7fffffffd868, init=<optimized out>, fini=<optimized out>, rtld_fini=<optimized out>, stack_end=0x7fffffffd858) at ../csu/libc-start.c:308
+#15 0x00000000005fc5fe in _start ()
+```
+
+                  </textarea>
+                </section>
+				<section data-markdown>
+				  <textarea data-template>
+```python[6]
+for k, v in strings_dict.items():
+    k = self._string_to_bytes(k, &ptr)
+    bytes_key = ptr
+    v = self._string_to_bytes(v, &ptr)
+    bytes_value = ptr
+    self._update_dict(bytes_key, bytes_value)
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[5]
+cdef object _string_to_bytes(self, object string, char ** ptr):
+    if isinstance(string, six.binary_type):
+        ptr[0] = PyBytes_AsString(string)
+    elif isinstance(string, six.text_type):
+        if ptr[0] == NULL:
+            string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
+            ptr[0] = PyBytes_AsString(string)
+    return string
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[2]
+cdef object _string_to_bytes(self, object string, char ** ptr):
+    ptr[0] = NULL
+    if isinstance(string, six.binary_type):
+        ptr[0] = PyBytes_AsString(string)
+    elif isinstance(string, six.text_type):
+        if ptr[0] == NULL:
+            string = PyUnicode_AsEncodedString(string, "utf-8", "surrogatepass")
+            ptr[0] = PyBytes_AsString(string)
+    return string
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[3]
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
+        cdef char * ptr
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+```
+                  </textarea>
+                </section>
+				<section data-markdown data-auto-animate>
+				  <textarea data-template>
+```python[3]
+    def __init__(self, dict strings_dict):
+        self.bytes_dict = {}
+        cdef char * ptr = NULL
+        cdef char * bytes_key = NULL
+        cdef char * bytes_value = NULL
+
+        for k, v in strings_dict.items():
+            k = self._string_to_bytes(k, &ptr)
+            bytes_key = ptr
+```
+                  </textarea>
+                </section>
+				<section data-markdown>
+				  <textarea data-template>
+```bash
+python setup.py build_ext --inplace
+python segmentation.py
+```
+```bash
+{b'barba': b'value_aaa', b'value_aaa': b'value_bbb', b'value_bbb': b'value_bbb'}
+```
+---
+## Conclusiones
+---
+## Pasar variables entre lenguajes tiene un peaje
+
+P.E: Como la latencia de red entre microservicios
+
+<img src="https://i.giphy.com/media/3oEduIwLTB806poveg/giphy.webp" />
+---
+## No todo se puede migrar
+Para compensar el peaje, el numero de operaciones tiene que ser considerable, lo que dificulta una migración
+---
+## Cambio de paradigma
+IMHO, Cambio de paradigma lenguajes como Python, PHP, JS a compilados C o C++ es mayor
+---
+## ¿He mencionado el uso de memoria en C++?
+
+<img src="https://i.giphy.com/media/10pWNtwPuDacvK/giphy.webp" style="width: 25%;">
+
+				  </textarea>
+				</section>
+               <section data-background-color="white">
+                   <h2 >¡Muchas gracias por vuestro tiempo!</h2>
+                   <div>
+                      <img src="revealjs/imgs/datadoghq-ar21.svg" style="width: 50%;">
+                    </div>
+                   <div>
+                      <a href="https://www.datadoghq.com/careers/">We are hiring!<br>
+                       www.datadoghq.com/careers/</a>
+                   </div>
+                </section>
+				<!-- <section data-markdown="segemtationfaultfest.md"
+					 	data-separator="^\n\n\n"
+						data-separator-vertical="^\n\n"
+					 	data-separator-notes="^Note:"
+					 	data-charset="iso-8859-15"></section> -->
+			</div>
+		</div>
+
+		<script src="revealjs/dist/reveal.js"></script>
+		<script src="revealjs/plugin/notes/notes.js"></script>
+		<script src="revealjs/plugin/markdown/markdown.js"></script>
+		<script src="revealjs/plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+                width: 1920,
+                height: 1080,
+                // Factor of the display size that should remain empty around
+                // the content
+                margin: 0.1,
+                // Bounds for smallest/largest possible scale to apply to content
+                minScale: 1.0,
+                maxScale: 3.0,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>

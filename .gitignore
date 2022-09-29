@@ -1,0 +1,9 @@
+.idea
+
+*.so
+
+*.o
+
+2022_10_pycones/02_segmentation_fault/cython_debug/
+
+2022_10_pycones/02_segmentation_fault/_segmentation.cpp
